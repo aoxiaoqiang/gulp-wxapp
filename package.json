@@ -11,7 +11,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "nodemonConfig": {
-    "ignore": ["test/*", "book/*", "client/*", "bin/*", "node_modules", "dist/*", "package.json"],
+    "ignore": [
+      "test/*",
+      "book/*",
+      "client/*",
+      "bin/*",
+      "node_modules",
+      "dist/*",
+      "package.json"
+    ],
     "delay": "1000"
   },
   "engines": {
