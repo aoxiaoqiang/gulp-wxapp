@@ -27,6 +27,7 @@ const src = './client'
 const dist = './dist'
 const isProd = argv.type === 'prod'
 
+// 异常处理
 const handleError = (err) => {
   console.log('\n')
   log(colors.red('Error!'))
@@ -45,13 +46,13 @@ gulp.task('wxml', () => {
   return gulp
     .src(`${src}/**/*.wxml`)
     .pipe(
-      isProd
-        ? htmlmin({
-            collapseWhitespace: true,
-            removeComments: true,
-            keepClosingSlash: true
-          })
-        : through.obj()
+      isProd ?
+      htmlmin({
+        collapseWhitespace: true,
+        removeComments: true,
+        keepClosingSlash: true
+      }) :
+      through.obj()
     )
     .pipe(gulp.dest(dist))
 })
@@ -64,12 +65,14 @@ gulp.task('wxss', () => {
     gulp.src(`${src}/**/*.{wxss,scss}`),
     sass().on('error', sass.logError),
     postcss([pxtorpx(), base64()]),
-    isProd
-      ? cssnano({
-          autoprefixer: false,
-          discardComments: {removeAll: true}
-        })
-      : through.obj(),
+    isProd ?
+    cssnano({
+      autoprefixer: false,
+      discardComments: {
+        removeAll: true
+      }
+    }) :
+    through.obj(),
     rename((path) => (path.extname = '.wxss')),
     gulp.dest(dist)
   ])
@@ -87,13 +90,13 @@ gulp.task('js', () => {
     .src(`${src}/**/*.js`)
     .pipe(isProd ? f : through.obj())
     .pipe(
-      isProd
-        ? jdists({
-            trigger: 'prod'
-          })
-        : jdists({
-            trigger: 'dev'
-          })
+      isProd ?
+      jdists({
+        trigger: 'prod'
+      }) :
+      jdists({
+        trigger: 'dev'
+      })
     )
     .pipe(isProd ? through.obj() : sourcemaps.init())
     .pipe(
@@ -102,18 +105,18 @@ gulp.task('js', () => {
       })
     )
     .pipe(
-      isProd
-        ? uglify({
-            compress: true
-          })
-        : through.obj()
+      isProd ?
+      uglify({
+        compress: true
+      }) :
+      through.obj()
     )
     .pipe(isProd ? through.obj() : sourcemaps.write('./'))
     .pipe(gulp.dest(dist))
 })
 
-gulp.task('watch', () => {
-  ;['wxml', 'wxss', 'js', 'json', 'wxs'].forEach((v) => {
+gulp.task('watch', () => {;
+  ['wxml', 'wxss', 'js', 'json', 'wxs'].forEach((v) => {
     gulp.watch(`${src}/**/*.${v}`, [v])
   })
   gulp.watch(`${src}/images/**`, ['images'])
@@ -138,13 +141,13 @@ gulp.task('cloud', () => {
   return gulp
     .src(`${cloudPath}/**`)
     .pipe(
-      isProd
-        ? jdists({
-            trigger: 'prod'
-          })
-        : jdists({
-            trigger: 'dev'
-          })
+      isProd ?
+      jdists({
+        trigger: 'prod'
+      }) :
+      jdists({
+        trigger: 'dev'
+      })
     )
     .pipe(gulp.dest(`${dist}/cloud-functions`))
 })
